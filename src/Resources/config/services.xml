@@ -12,7 +12,6 @@
 
         <prototype namespace="TwinElements\PageBundle\Controller\Admin\" resource="../../../src/Controller/Admin/*">
             <tag name="controller.service_arguments"/>
-            <bind key="$adminLocale">%admin_locale%</bind>
         </prototype>
 
         <service id="TwinElements\PageBundle\AdminMenu">
