@@ -1,0 +1,8 @@
+{% extends '@TwinElementsAdmin/core/details.html.twig' %}
+
+{% set back_button_link = path('page_index') %}
+
+{% block title %}{{ "page.adding_a_new_page"|translate_admin }}{% endblock %}
+{% block buttons %}
+    {{ block('back_button') }}
+{% endblock %}

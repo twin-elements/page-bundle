@@ -1,0 +1,48 @@
+{% extends '@TwinElementsAdmin/core/details_with_sidebar.html.twig' %}
+
+{% set back_button_link = path('page_index') %}
+
+{% block title %}
+    {% if entity.title %}
+        {{ entity.title }}
+    {% else %}
+        {{ entity.translate(default_locale, false).title }}<br>
+        <span class="badge badge-warning small">{{ "cms.no_translation_for_this_locale"|trans({},null,admin_locale) }}</span>
+    {% endif %}
+{% endblock %}
+{% block buttons %}
+    {{ block('back_button') }}
+{% endblock %}
+
+{% block right_sidebar %}
+    {{ block('changes_details') }}
+
+    {% if entity.isContentFor == null %}
+        {% if entity.route %}
+            <div class="cms-section">
+                <p>{{ "page.link_for_preview"|trans({},'messages',admin_locale) }}:
+                    <a class="label label-info"
+                       href="{{ path(entity.route) }}">{{ entity.title }}</a></p>
+            </div>
+        {% elseif entity.enable and entity.slug %}
+            <div class="cms-section">
+                <p>{{ "page.link_for_preview"|trans({},'messages',admin_locale) }}:
+                    <a class="label label-info"
+                       href="{{ path('front_page', {'slug':entity.slug, 'id': entity.id}) }}">{{ entity.title }}</a></p>
+            </div>
+        {% endif %}
+        {% else %}
+            <div class="cms-section">
+                <p>To jest treść dla podstrony: <span class="badge badge-info">{% if entity.isContentFor.title %}{{ entity.isContentFor.title }}{% else %}{{ entity.isContentFor.translate(default_locale, false).title }}{% endif %}</span></p>
+            </div>
+    {% endif %}
+
+    {% if entity.route == '' %}
+        {{ block('delete_form') }}
+    {% endif %}
+
+    {% set file_path = entity.cover %}
+    {% set section_title = 'Obrazek wyróżniający' %}
+    {{ block('single_image_preview_template') }}
+
+{% endblock %}

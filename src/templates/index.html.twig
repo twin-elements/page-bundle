@@ -1,0 +1,113 @@
+{% extends '@CoreAdmin/Default/list_base.html.twig' %}
+
+{% set add_button_link = path('page_new') %}
+
+{% block title %}{{ "page.pages"|trans({},null,admin_locale) }}{% endblock %}
+{% block buttons %}
+    {{ block('add_button') }}
+{% endblock %}
+
+{% block list %}
+
+    {{ block('list_ul_begin') }}
+    {{ block('list_li_header_begin') }}
+    {{ block('id_header') }}
+    <div class="col">{{ "cms.title"|trans({},'messages') }}</div>
+    {{ block('list_changes_header') }}
+    {{ block('circle_header') }}
+    {{ block('move_header') }}
+    {{ block('list_li_header_end') }}
+    {% for entity in pages %}
+        {% set createdAt = entity.createdAt %}
+        {% set createdBy = entity.createdBy %}
+        {% set updatedAt = entity.updatedAt %}
+        {% set updatedBy = entity.updatedBy %}
+
+        {% set id = entity.id %}
+        {% set circle_active = entity.enable %}
+
+        {{ block('list_li_begin') }}
+        {{ block('id') }}
+        <div class="col">
+            <div class="title">
+                <span>{{ entity.title }}</span>
+                {% if entity.title is null %}
+                    <span class="badge badge-warning">{{ "admin.no_translation"|translate_admin }}</span>
+                {% endif %}
+                <br>
+                <div class="hidden-bar">
+                    {% if entity.enable %}
+                        {% if entity.route %}
+                            {% set page_url = path(entity.route) %}
+                        {% else %}
+                            {% set page_url = path('front_page', { 'slug': entity.slug, 'id': entity.id }) %}
+                        {% endif %}
+                        <a href="{{ page_url }}">{{ "actions.show"|translate_admin }}</a>
+                        <span class="circle-separator"></span>
+                    {% endif %}
+                    {% if is_granted('ROLE_EDIT') %}
+                        <a href="{{ path('page_edit', { 'id': entity.id }) }}">{{ "cms.edit"|translate_admin }}</a>
+                    {% endif %}
+                    {% if is_granted('ROLE_SUPER_ADMIN') %}
+                        <span class="circle-separator"></span>
+                        <a href="{{ path('page_add_new_content', {'id': entity.id}) }}">{{ "page.add_a_new_content"|translate_admin }}</a>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+        {{ block('changes_box_in_list') }}
+        {{ block('circle') }}
+        {{ block('move') }}
+        {{ block('list_li_end') }}
+        {% if entity.childrenContents.count > 0 %}
+            <div class="bg-light row">
+                <div class="col">
+                    <p class="mb-0 mt-3 font-weight-bold">Treści:</p>
+                    {% for content in entity.childrenContents %}
+                        {% set createdAt = content.createdAt %}
+                        {% set createdBy = content.createdBy %}
+                        {% set updatedAt = content.updatedAt %}
+                        {% set updatedBy = content.updatedBy %}
+                        {% set id = content.id %}
+                        {% set circle_active = content.enable %}
+                        {{ block('list_li_begin') }}
+                        {{ block('id') }}
+                        <div class="col">
+                            <div class="title">
+                                <span>{{ content.title }}</span>
+                                {% if content.title is null %}
+                                    <span class="badge badge-warning">{{ "admin.no_translation"|translate_admin }}</span>
+                                {% endif %}
+                                <br>
+                                <div class="hidden-bar">
+                                    {% if is_granted('ROLE_EDIT') %}
+                                        <a href="{{ path('page_edit', { 'id': content.id }) }}">{{ "cms.edit"|translate_admin }}</a>
+                                    {% endif %}
+                                </div>
+                            </div>
+                        </div>
+                        {{ block('changes_box_in_list') }}
+                        {{ block('circle') }}
+                        {{ block('move') }}
+                        {{ block('list_li_end') }}
+
+                    {% endfor %}
+                </div>
+            </div>
+        {% endif %}
+
+    {% else %}
+        {{ block('no_elements') }}
+    {% endfor %}
+    {{ block('list_ul_end') }}
+    {% if pages.totalItemCount > pages.itemNumberPerPage %}
+        <div class="py-3 mt-3">
+            {{ knp_pagination_render(pages) }}
+        </div>
+    {% endif %}
+{% endblock %}
+
+{% block additional_javascripts %}
+    {{ parent() }}
+    {{ renderSortable("App\\\\Entity\\\\Page\\\\Page") }}
+{% endblock %}
