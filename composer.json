@@ -1,6 +1,6 @@
 {
-    "name": "twin-elements/manual-bundle",
-    "description": "Manual for CMS",
+    "name": "twin-elements/page-bundle",
+    "description": "Pages for CMS",
     "type": "symfony-bundle",
     "license": "MIT",
     "authors": [
@@ -16,7 +16,7 @@
     },
     "autoload": {
         "psr-4": {
-            "TwinElements\\ManualBundle\\": "src/"
+            "TwinElements\\PageBundle\\": "src/"
         }
     }
 }
