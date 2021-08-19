@@ -10,7 +10,6 @@ use Knp\Component\Pager\PaginatorInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\HttpFoundation\Request;
-use Symfony\Contracts\Translation\TranslatorInterface;
 use TwinElements\AdminBundle\Role\AdminUserRole;
 
 
@@ -25,7 +24,7 @@ class PageController extends AbstractController
     /**
      * @Route("/", name="page_index", methods={"GET"})
      */
-    public function indexAction(Request $request, PaginatorInterface $paginator, PageRepository $pageRepository, TranslatorInterface $translator)
+    public function indexAction(Request $request, PaginatorInterface $paginator, PageRepository $pageRepository)
     {
         try {
             $limit = 20;
@@ -41,7 +40,7 @@ class PageController extends AbstractController
             );
 
             $this->breadcrumbs->setItems([
-                $translator->trans('page.pages_list', [], 'messages', $this->adminLocale) => null
+                $this->adminTranslator->translate('page.pages_list') => null
             ]);
 
             return $this->render('@TwinElementsPage/index.html.twig', array(
@@ -58,7 +57,7 @@ class PageController extends AbstractController
     /**
      * @Route("/new", name="page_new", methods={"GET", "POST"})
      */
-    public function newAction(Request $request, TranslatorInterface $translator)
+    public function newAction(Request $request)
     {
         try {
             $this->denyAccessUnlessGranted(AdminUserRole::ROLE_ADMIN);
@@ -89,8 +88,8 @@ class PageController extends AbstractController
             }
 
             $this->breadcrumbs->setItems([
-                $translator->trans('page.pages_list', [], 'messages', $this->adminLocale) => $this->generateUrl('page_index'),
-                $translator->trans('page.adding_a_new_page', [], 'messages', $this->adminLocale) => null
+                $this->adminTranslator->translate('page.pages_list') => $this->generateUrl('page_index'),
+                $this->adminTranslator->translate('page.adding_a_new_page') => null
             ]);
 
             return $this->render('@TwinElementsPage/new.html.twig', array(
@@ -107,7 +106,7 @@ class PageController extends AbstractController
     /**
      * @Route("/{id}/edit", name="page_edit", methods={"GET", "POST"})
      */
-    public function editAction(int $id, Request $request, PageRepository $pageRepository, TranslatorInterface $translator)
+    public function editAction(int $id, Request $request, PageRepository $pageRepository)
     {
         $this->denyAccessUnlessGranted(AdminUserRole::ROLE_USER);
 
@@ -143,7 +142,7 @@ class PageController extends AbstractController
         }
 
         $this->breadcrumbs->setItems([
-            $translator->trans('page.pages_list', [], 'messages', $this->adminLocale) => $this->generateUrl('page_index'),
+            $this->adminTranslator->translate('page.pages_list') => $this->generateUrl('page_index'),
             $page->getTitle() => null
         ]);
 
@@ -198,7 +197,7 @@ class PageController extends AbstractController
     /**
      * @Route("/{id}", name="page_delete", methods={"DELETE"})
      */
-    public function deleteAction(Request $request, Page $page, TranslatorInterface $translator)
+    public function deleteAction(Request $request, Page $page)
     {
         $this->denyAccessUnlessGranted(AdminUserRole::ROLE_ADMIN);
 
@@ -208,7 +207,7 @@ class PageController extends AbstractController
         if ($form->isSubmitted() && $form->isValid()) {
 
             if ($page->getRoute() != '') {
-                $this->flashes->errorMessage($translator->trans('page.this_page_has_a_module', [], 'messages', $this->adminLocale));
+                $this->flashes->errorMessage($this->adminTranslator->translate('page.this_page_has_a_module'));
                 return $this->redirectToRoute('page_edit', [
                     'id' => $page->getId()
                 ]);
