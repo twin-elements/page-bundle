@@ -1,4 +1,4 @@
-{% extends '@CoreAdmin/Default/list_base.html.twig' %}
+{% extends '@TwinElementsAdmin/core/list.html.twig' %}
 
 {% set add_button_link = path('page_new') %}
 
@@ -109,5 +109,5 @@
 
 {% block additional_javascripts %}
     {{ parent() }}
-    {{ renderSortable("App\\\\Entity\\\\Page\\\\Page") }}
+    {{ renderSortable("TwinElements\\\\PageBundle\\\\Entity\\\\Page\\\\Page") }}
 {% endblock %}
