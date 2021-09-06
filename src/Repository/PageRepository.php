@@ -114,4 +114,39 @@ class PageRepository extends ServiceEntityRepository
 
         return $qb->getQuery()->getOneOrNullResult();
     }
+
+    /**
+     * @param string $code
+     * @param string|null $locale
+     * @return Page[]|null
+     * @throws \Doctrine\ORM\NonUniqueResultException
+     */
+    public function findByCode(string $code, $locale = null)
+    {
+        $qb = $this->createQueryBuilder('p')
+            ->select('p', 't')
+            ->leftJoin('p.translations', 't');
+
+        $qb
+            ->where(
+                $qb->expr()->eq('p.code', ':code')
+            )
+            ->setParameter('code', $code)
+            ->andWhere(
+                $qb->expr()->eq('t.enable', ':enable')
+            )
+            ->setParameter('enable', true)
+            ->orderBy('p.position', 'asc')
+        ;
+
+        if ($locale) {
+            $qb
+                ->andWhere(
+                    $qb->expr()->eq('t.locale', ':locale')
+                )
+                ->setParameter('locale', $locale);
+        }
+
+        return $qb->getQuery()->getResult();
+    }
 }
