@@ -7,8 +7,39 @@
     {{ block('add_button') }}
 {% endblock %}
 
-{% block list %}
+{% block top_sidebar %}
+    {% set queryParams = app.request.query.all %}
+    <div class="d-flex justify-content-between mb-6">
+        <div class="dropdown">
+            <button type="button" class="btn btn-primary dropdown-toggle" id="setPagesLimit" data-toggle="dropdown"
+                    aria-haspopup="true" aria-expanded="false">
+                {% if app.request.query.has('limit') %}<span class="badge">
+                    ({{ app.request.query.get('limit') }})</span> {% endif %}Wyświetl na stronie
+            </button>
+            <div class="dropdown-menu dropdown-menu-right" aria-labelledby="setPagesLimit">
+                <a class="dropdown-item{% if limit == 20 %} active{% endif %}"
+                   href="{{ path('page_index', queryParams|merge({limit: 20})) }}">20 stron</a>
+                <a class="dropdown-item{% if limit == 40 %} active{% endif %}"
+                   href="{{ path('page_index', queryParams|merge({limit: 40})) }}">40 stron</a>
+                <div class="dropdown-divider"></div>
+                <a class="dropdown-item{% if limit == 9999 %} active{% endif %}"
+                   href="{{ path('page_index', queryParams|merge({limit: 9999})) }}">Wszystkie</a>
+            </div>
+        </div>
+        <div>
+            {% form_theme searchForm 'bootstrap_4_layout.html.twig' %}
+            {{ form_start(searchForm) }}
+            <div class="d-flex align-items-center">
+                {{ form_widget(searchForm.title) }}
+                {{ form_widget(searchForm.button) }}
+            </div>
 
+            {{ form_end(searchForm) }}
+        </div>
+    </div>
+{% endblock %}
+
+{% block list %}
     {{ block('list_ul_begin') }}
     {{ block('list_li_header_begin') }}
     {{ block('id_header') }}

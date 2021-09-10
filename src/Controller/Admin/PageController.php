@@ -4,13 +4,16 @@ namespace TwinElements\PageBundle\Controller\Admin;
 
 use TwinElements\AdminBundle\Model\CrudControllerTrait;
 use TwinElements\PageBundle\Entity\Page\Page;
+use TwinElements\PageBundle\Entity\SearchPage;
 use TwinElements\PageBundle\Form\PageType;
+use TwinElements\PageBundle\Form\SearchPageType;
 use TwinElements\PageBundle\Repository\PageRepository;
 use Knp\Component\Pager\PaginatorInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\HttpFoundation\Request;
 use TwinElements\AdminBundle\Role\AdminUserRole;
+use function Doctrine\ORM\QueryBuilder;
 
 
 /**
@@ -22,7 +25,7 @@ class PageController extends AbstractController
     use CrudControllerTrait;
 
     /**
-     * @Route("/", name="page_index", methods={"GET"})
+     * @Route("/", name="page_index", methods={"GET","POST"})
      */
     public function indexAction(Request $request, PaginatorInterface $paginator, PageRepository $pageRepository)
     {
@@ -31,10 +34,24 @@ class PageController extends AbstractController
             if ($request->query->has('limit')) {
                 $limit = $request->query->getInt('limit');
             }
-            $pagesQuery = $pageRepository->findIndexListItemsQuery($request->getLocale());
+            $search = new SearchPage();
+            $searchForm = $this->createForm(SearchPageType::class, $search);
+            $searchForm->handleRequest($request);
+
+            $pagesQB = $pageRepository->findIndexListItemsQB($request->getLocale());
+            if ($searchForm->isSubmitted() && $searchForm->isValid()) {
+                if ($search->getTitle()) {
+                    $pagesQB
+                        ->andWhere(
+                            $pagesQB->expr()->like('page_translations.title', ':search')
+                        )
+                        ->setParameter('search', "%" . $search->getTitle() . "%");
+                }
+            }
+
 
             $pages = $paginator->paginate(
-                $pagesQuery,
+                $pagesQB->getQuery(),
                 $request->query->getInt('page', 1),
                 $limit
             );
@@ -45,6 +62,8 @@ class PageController extends AbstractController
 
             return $this->render('@TwinElementsPage/index.html.twig', array(
                 'pages' => $pages,
+                'limit' => $limit,
+                'searchForm' => $searchForm->createView()
             ));
         } catch (\Exception $exception) {
             $this->flashes->errorMessage($exception->getMessage());

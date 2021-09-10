@@ -2,12 +2,11 @@
 
 namespace TwinElements\PageBundle\Repository;
 
+use Doctrine\ORM\QueryBuilder;
 use TwinElements\PageBundle\Entity\Page\Page;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
-use Doctrine\ORM\Query;
 use Doctrine\Persistence\ManagerRegistry;
 use Exception;
-use function Doctrine\ORM\QueryBuilder;
 
 /**
  * @method Page|null find($id)
@@ -23,10 +22,10 @@ class PageRepository extends ServiceEntityRepository
     }
 
     /**
-     * @return Query
+     * @return QueryBuilder
      * @throws Exception
      */
-    public function findIndexListItemsQuery(string $locale)
+    public function findIndexListItemsQB(string $locale)
     {
         if (is_null($locale)) {
             throw new Exception();
@@ -42,7 +41,7 @@ class PageRepository extends ServiceEntityRepository
             )
             ->orderBy('page.position', 'asc');
 
-        return $qb->getQuery();
+        return $qb;
     }
 
     public function findIndexListItems(string $locale)
