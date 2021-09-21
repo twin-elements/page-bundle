@@ -2,20 +2,18 @@
 
 namespace TwinElements\PageBundle\Entity\Page;
 
-use App\Model\IdTrait;
-use App\Model\PositionInterface;
-use App\Model\SeoInterface;
-use App\Model\SeoTranslatableTrait;
-use App\Model\TranslatableAttachmentsTrait;
-use App\Model\TranslatableContentTrait;
-use App\Model\TranslatableImageAlbumTrait;
-use App\Model\TranslatableImageTrait;
-use App\Model\TranslatableTitle;
-use App\Model\TranslatableTitleSlug;
+use TwinElements\AdminBundle\Entity\Traits\IdTrait;
+use TwinElements\AdminBundle\Entity\Traits\PositionInterface;
+use TwinElements\AdminBundle\Entity\Traits\TranslatableAttachmentsTrait;
+use TwinElements\AdminBundle\Entity\Traits\TranslatableContentTrait;
+use TwinElements\AdminBundle\Entity\Traits\TranslatableImageAlbumTrait;
+use TwinElements\AdminBundle\Entity\Traits\TranslatableImageTrait;
+use TwinElements\AdminBundle\Entity\Traits\TranslatableTitle;
+use TwinElements\AdminBundle\Entity\Traits\TranslatableTitleSlug;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
-use App\Model\PositionTrait;
+use TwinElements\AdminBundle\Entity\Traits\PositionTrait;
 use Knp\DoctrineBehaviors\Contract\Entity\BlameableInterface;
 use Knp\DoctrineBehaviors\Contract\Entity\LoggableInterface;
 use Knp\DoctrineBehaviors\Contract\Entity\TimestampableInterface;
@@ -24,6 +22,8 @@ use Knp\DoctrineBehaviors\Model\Blameable\BlameableTrait;
 use Knp\DoctrineBehaviors\Model\Loggable\LoggableTrait;
 use Knp\DoctrineBehaviors\Model\Timestampable\TimestampableTrait;
 use Knp\DoctrineBehaviors\Model\Translatable\TranslatableTrait;
+use TwinElements\SeoBundle\Model\SeoInterface;
+use TwinElements\SeoBundle\Model\SeoTranslatableTrait;
 
 /**
  * @ORM\Entity(repositoryClass="TwinElements\PageBundle\Repository\PageRepository")

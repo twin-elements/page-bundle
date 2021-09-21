@@ -27,7 +27,7 @@ class PageController extends AbstractController
     /**
      * @Route("/", name="page_index", methods={"GET","POST"})
      */
-    public function indexAction(Request $request, PaginatorInterface $paginator, PageRepository $pageRepository)
+    public function index(Request $request, PaginatorInterface $paginator, PageRepository $pageRepository)
     {
         try {
             $limit = 20;

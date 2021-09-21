@@ -3,20 +3,20 @@
 
 namespace TwinElements\PageBundle\Entity\Page;
 
-use App\Model\AttachmentsInterface;
-use App\Model\AttachmentsTrait;
-use App\Model\EnableInterface;
-use App\Model\EnableTrait;
-use App\Model\IdTrait;
-use App\Model\ImageAlbumInterface;
-use App\Model\ImageAlbumTrait;
-use App\Model\ImageInterface;
-use App\Model\ImageTrait;
-use App\Model\SeoInterface;
-use App\Model\SeoTrait;
-use App\Model\TitleInterface;
-use App\Model\TitleSlugTrait;
-use App\Model\TitleTrait;
+use TwinElements\AdminBundle\Entity\Traits\AttachmentsInterface;
+use TwinElements\AdminBundle\Entity\Traits\AttachmentsTrait;
+use TwinElements\AdminBundle\Entity\Traits\EnableInterface;
+use TwinElements\AdminBundle\Entity\Traits\EnableTrait;
+use TwinElements\AdminBundle\Entity\Traits\IdTrait;
+use TwinElements\AdminBundle\Entity\Traits\ImageAlbumInterface;
+use TwinElements\AdminBundle\Entity\Traits\ImageAlbumTrait;
+use TwinElements\AdminBundle\Entity\Traits\ImageInterface;
+use TwinElements\AdminBundle\Entity\Traits\ImageTrait;
+use TwinElements\SeoBundle\Model\SeoInterface;
+use TwinElements\SeoBundle\Model\SeoTrait;
+use TwinElements\AdminBundle\Entity\Traits\TitleInterface;
+use TwinElements\AdminBundle\Entity\Traits\TitleSlugTrait;
+use TwinElements\AdminBundle\Entity\Traits\TitleTrait;
 use Doctrine\ORM\Mapping as ORM;
 use Gedmo\Mapping\Annotation as Gedmo;
 use Knp\DoctrineBehaviors\Contract\Entity\TranslationInterface;

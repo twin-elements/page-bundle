@@ -2,7 +2,7 @@
 
 namespace TwinElements\PageBundle\Form;
 
-use App\Form\Admin\SeoType;
+use TwinElements\FormExtensions\Type\FileWithTitleType;
 use TwinElements\PageBundle\Entity\Page\Page;
 use Doctrine\ORM\EntityRepository;
 use Symfony\Component\Form\AbstractType;
@@ -19,6 +19,7 @@ use TwinElements\FormExtensions\Type\TEEntityType;
 use TwinElements\FormExtensions\Type\TEUploadType;
 use TwinElements\FormExtensions\Type\TinymceType;
 use TwinElements\FormExtensions\Type\ToggleChoiceType;
+use TwinElements\SeoBundle\Form\Admin\SeoType;
 use function Doctrine\ORM\QueryBuilder;
 
 class PageType extends AbstractType
@@ -62,7 +63,7 @@ class PageType extends AbstractType
                 'required' => false
             ])
             ->add('imageAlbum', TECollectionType::class, [
-                'entry_type' => TEUploadType::class,
+                'entry_type' => FileWithTitleType::class,
                 'entry_options' => [
                     'file_type' => 'image',
                     'label' => $this->translator->translate('admin_type.image_album.choose_image')
