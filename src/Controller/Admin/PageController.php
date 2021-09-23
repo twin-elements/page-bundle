@@ -13,6 +13,7 @@ use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\HttpFoundation\Request;
 use TwinElements\AdminBundle\Role\AdminUserRole;
+use TwinElements\PageBundle\Security\PageVoter;
 use function Doctrine\ORM\QueryBuilder;
 
 
@@ -30,6 +31,8 @@ class PageController extends AbstractController
     public function index(Request $request, PaginatorInterface $paginator, PageRepository $pageRepository)
     {
         try {
+            $this->denyAccessUnlessGranted(PageVoter::VIEW, new Page());
+
             $limit = 20;
             if ($request->query->has('limit')) {
                 $limit = $request->query->getInt('limit');
@@ -79,7 +82,7 @@ class PageController extends AbstractController
     public function newAction(Request $request)
     {
         try {
-            $this->denyAccessUnlessGranted(AdminUserRole::ROLE_ADMIN);
+            $this->denyAccessUnlessGranted(PageVoter::FULL, new Page());
 
             $page = new Page();
             $page->setCurrentLocale($request->getLocale());
@@ -127,7 +130,7 @@ class PageController extends AbstractController
      */
     public function editAction(int $id, Request $request, PageRepository $pageRepository)
     {
-        $this->denyAccessUnlessGranted(AdminUserRole::ROLE_USER);
+        $this->denyAccessUnlessGranted(PageVoter::EDIT, new Page());
 
         /**
          * @var Page $page
@@ -177,6 +180,7 @@ class PageController extends AbstractController
      */
     public function addContent(int $id, Request $request, PageRepository $repository)
     {
+        $this->denyAccessUnlessGranted(PageVoter::FULL, new Page());
         $parent = $repository->find($id);
         $page = new Page();
         $page->setIsContentFor($parent);
@@ -218,7 +222,7 @@ class PageController extends AbstractController
      */
     public function deleteAction(Request $request, Page $page)
     {
-        $this->denyAccessUnlessGranted(AdminUserRole::ROLE_ADMIN);
+        $this->denyAccessUnlessGranted(PageVoter::FULL, new Page());
 
         $form = $this->createDeleteForm($page);
         $form->handleRequest($request);

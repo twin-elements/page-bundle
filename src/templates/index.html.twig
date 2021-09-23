@@ -73,10 +73,10 @@
                         {% else %}
                             {% set page_url = path('front_page', { 'slug': entity.slug, 'id': entity.id }) %}
                         {% endif %}
-                        <a href="{{ page_url }}">{{ "actions.show"|translate_admin }}</a>
-                        <span class="circle-separator"></span>
+                        <a href="{{ page_url }}" target="_blank">{{ "actions.show"|translate_admin }}</a>
                     {% endif %}
-                    {% if is_granted('ROLE_EDIT') %}
+                    {% if is_granted(constant('TwinElements\\PageBundle\\Role\\PageRoles::ROLE_PAGE_EDIT')) %}
+                        <span class="circle-separator"></span>
                         <a href="{{ path('page_edit', { 'id': entity.id }) }}">{{ "cms.edit"|translate_admin }}</a>
                     {% endif %}
                     {% if is_granted('ROLE_SUPER_ADMIN') %}
@@ -111,7 +111,7 @@
                                 {% endif %}
                                 <br>
                                 <div class="hidden-bar">
-                                    {% if is_granted('ROLE_EDIT') %}
+                                    {% if is_granted(constant('TwinElements\\PageBundle\\Role\\PageRoles::ROLE_PAGE_EDIT')) %}
                                         <a href="{{ path('page_edit', { 'id': content.id }) }}">{{ "cms.edit"|translate_admin }}</a>
                                     {% endif %}
                                 </div>
