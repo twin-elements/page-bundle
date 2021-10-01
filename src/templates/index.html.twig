@@ -2,7 +2,7 @@
 
 {% set add_button_link = path('page_new') %}
 
-{% block title %}{{ "page.pages"|trans({},null,admin_locale) }}{% endblock %}
+{% block title %}{{ "page.pages"|translate_admin }}{% endblock %}
 {% block buttons %}
     {{ block('add_button') }}
 {% endblock %}
@@ -43,7 +43,7 @@
     {{ block('list_ul_begin') }}
     {{ block('list_li_header_begin') }}
     {{ block('id_header') }}
-    <div class="col">{{ "cms.title"|trans({},'messages') }}</div>
+    <div class="col">{{ "admin.title"|translate_admin }}</div>
     {{ block('list_changes_header') }}
     {{ block('circle_header') }}
     {{ block('move_header') }}
@@ -75,9 +75,9 @@
                         {% endif %}
                         <a href="{{ page_url }}" target="_blank">{{ "actions.show"|translate_admin }}</a>
                     {% endif %}
-                    {% if is_granted(constant('TwinElements\\PageBundle\\Role\\PageRoles::ROLE_PAGE_EDIT')) %}
+                    {% if is_granted(constant('TwinElements\\PageBundle\\Security\\PageVoter::VIEW'), entity) %}
                         <span class="circle-separator"></span>
-                        <a href="{{ path('page_edit', { 'id': entity.id }) }}">{{ "cms.edit"|translate_admin }}</a>
+                        <a href="{{ path('page_edit', { 'id': entity.id }) }}">{{ "admin.edit"|translate_admin }}</a>
                     {% endif %}
                     {% if is_granted('ROLE_SUPER_ADMIN') %}
                         <span class="circle-separator"></span>
@@ -138,7 +138,6 @@
     {% endif %}
 {% endblock %}
 
-{% block additional_javascripts %}
-    {{ parent() }}
-    {{ renderSortable("TwinElements\\\\PageBundle\\\\Entity\\\\Page\\\\Page") }}
+{% block head_js %}
+    {{ block('sortable') }}
 {% endblock %}

@@ -7,10 +7,10 @@
     <services>
         <defaults autowire="true" autoconfigure="true"/>
 
-        <prototype namespace="TwinElements\PageBundle\" resource="../../../src/*"
-                   exclude="../../../src/{DependencyInjection,Entity,Tests}"/>
+        <prototype namespace="TwinElements\PageBundle\" resource="../../src/*"
+                   exclude="../../src/{DependencyInjection,Entity,Tests}"/>
 
-        <prototype namespace="TwinElements\PageBundle\Controller\Admin\" resource="../../../src/Controller/Admin/*">
+        <prototype namespace="TwinElements\PageBundle\Controller\Admin\" resource="../../src/Controller/Admin/*">
             <tag name="controller.service_arguments"/>
         </prototype>
 

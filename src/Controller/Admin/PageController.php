@@ -2,6 +2,7 @@
 
 namespace TwinElements\PageBundle\Controller\Admin;
 
+use TwinElements\AdminBundle\Entity\Traits\PositionInterface;
 use TwinElements\AdminBundle\Model\CrudControllerTrait;
 use TwinElements\PageBundle\Entity\Page\Page;
 use TwinElements\PageBundle\Entity\SearchPage;
@@ -12,7 +13,6 @@ use Knp\Component\Pager\PaginatorInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\HttpFoundation\Request;
-use TwinElements\AdminBundle\Role\AdminUserRole;
 use TwinElements\PageBundle\Security\PageVoter;
 use function Doctrine\ORM\QueryBuilder;
 
@@ -31,7 +31,8 @@ class PageController extends AbstractController
     public function index(Request $request, PaginatorInterface $paginator, PageRepository $pageRepository)
     {
         try {
-            $this->denyAccessUnlessGranted(PageVoter::VIEW, new Page());
+            $entity = new Page();
+            $this->denyAccessUnlessGranted(PageVoter::VIEW, $entity);
 
             $limit = 20;
             if ($request->query->has('limit')) {
@@ -52,7 +53,6 @@ class PageController extends AbstractController
                 }
             }
 
-
             $pages = $paginator->paginate(
                 $pagesQB->getQuery(),
                 $request->query->getInt('page', 1),
@@ -63,11 +63,17 @@ class PageController extends AbstractController
                 $this->adminTranslator->translate('page.pages_list') => null
             ]);
 
-            return $this->render('@TwinElementsPage/index.html.twig', array(
+            $responseParameters = [
                 'pages' => $pages,
                 'limit' => $limit,
                 'searchForm' => $searchForm->createView()
-            ));
+            ];
+
+            if ((new \ReflectionClass(Page::class))->implementsInterface(PositionInterface::class)) {
+                $responseParameters['sortable'] = Page::class;
+            }
+
+            return $this->render('@TwinElementsPage/index.html.twig', $responseParameters);
         } catch (\Exception $exception) {
             $this->flashes->errorMessage($exception->getMessage());
 

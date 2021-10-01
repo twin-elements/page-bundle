@@ -1,0 +1,7 @@
+page:
+  module_name: Страницы
+  pages: Страницы
+  pages_list: Список страниц
+  adding_a_new_page: Создать страницу
+  this_page_has_a_module: Страницу нельзя удалить, так как к ней привязан модуль
+  link_for_preview: Предварительный просмотр
