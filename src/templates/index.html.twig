@@ -94,35 +94,37 @@
             <div class="bg-light row">
                 <div class="col">
                     <p class="mb-0 mt-3 font-weight-bold">Treści:</p>
-                    {% for content in entity.childrenContents %}
-                        {% set createdAt = content.createdAt %}
-                        {% set createdBy = content.createdBy %}
-                        {% set updatedAt = content.updatedAt %}
-                        {% set updatedBy = content.updatedBy %}
-                        {% set id = content.id %}
-                        {% set circle_active = content.enable %}
-                        {{ block('list_li_begin') }}
-                        {{ block('id') }}
-                        <div class="col">
-                            <div class="title">
-                                <span>{{ content.title }}</span>
-                                {% if content.title is null %}
-                                    <span class="badge badge-warning">{{ "admin.no_translation"|translate_admin }}</span>
-                                {% endif %}
-                                <br>
-                                <div class="hidden-bar">
-                                    {% if is_granted(constant('TwinElements\\PageBundle\\Role\\PageRoles::ROLE_PAGE_EDIT')) %}
-                                        <a href="{{ path('page_edit', { 'id': content.id }) }}">{{ "cms.edit"|translate_admin }}</a>
+                    {{ block('list_ul_begin') }}
+                        {% for content in entity.childrenContents %}
+                            {% set createdAt = content.createdAt %}
+                            {% set createdBy = content.createdBy %}
+                            {% set updatedAt = content.updatedAt %}
+                            {% set updatedBy = content.updatedBy %}
+                            {% set id = content.id %}
+                            {% set circle_active = content.enable %}
+                            {{ block('list_li_begin') }}
+                            {{ block('id') }}
+                            <div class="col">
+                                <div class="title">
+                                    <span>{{ content.title }}</span>
+                                    {% if content.title is null %}
+                                        <span class="badge badge-warning">{{ "admin.no_translation"|translate_admin }}</span>
                                     {% endif %}
+                                    <br>
+                                    <div class="hidden-bar">
+                                        {% if is_granted(constant('TwinElements\\PageBundle\\Security\\PageVoter::EDIT'),content) %}
+                                            <a href="{{ path('page_edit', { 'id': content.id }) }}">{{ "admin.edit"|translate_admin }}</a>
+                                        {% endif %}
+                                    </div>
                                 </div>
                             </div>
-                        </div>
-                        {{ block('changes_box_in_list') }}
-                        {{ block('circle') }}
-                        {{ block('move') }}
-                        {{ block('list_li_end') }}
+                            {{ block('changes_box_in_list') }}
+                            {{ block('circle') }}
+                            {{ block('move') }}
+                            {{ block('list_li_end') }}
 
-                    {% endfor %}
+                        {% endfor %}
+                    {{ block('list_ul_end') }}
                 </div>
             </div>
         {% endif %}
