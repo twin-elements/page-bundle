@@ -39,19 +39,13 @@ class PageController extends AbstractController
                 $limit = $request->query->getInt('limit');
             }
             $search = new SearchPage();
-            $searchForm = $this->createForm(SearchPageType::class, $search);
+            $searchForm = $this->createForm(SearchPageType::class, $search, [
+                'action' => $this->generateUrl('page_search'),
+                'method' => 'GET'
+            ]);
             $searchForm->handleRequest($request);
 
             $pagesQB = $pageRepository->findIndexListItemsQB($request->getLocale());
-            if ($searchForm->isSubmitted() && $searchForm->isValid()) {
-                if ($search->getTitle()) {
-                    $pagesQB
-                        ->andWhere(
-                            $pagesQB->expr()->like('page_translations.title', ':search')
-                        )
-                        ->setParameter('search', "%" . $search->getTitle() . "%");
-                }
-            }
 
             $pages = $paginator->paginate(
                 $pagesQB->getQuery(),
@@ -80,6 +74,49 @@ class PageController extends AbstractController
             return $this->redirectToRoute('admin_dashboard');
         }
 
+    }
+
+    /**
+     * @Route("/search", name="page_search", methods={"GET"})
+     */
+    public function search(
+        Request        $request,
+        PageRepository $pageRepository
+    )
+    {
+        try {
+            $this->denyAccessUnlessGranted(PageVoter::VIEW, new Page());
+
+            $search = new SearchPage();
+            $searchForm = $this->createForm(SearchPageType::class, $search, [
+                'action' => $this->generateUrl('page_search'),
+                'method' => 'GET'
+            ]);
+            $searchForm->handleRequest($request);
+            if ($searchForm->isSubmitted() && $searchForm->isValid()) {
+                if (is_null($search->getTitle())) {
+                    throw new \Exception('No query');
+                }
+                $pages = $pageRepository->search($request->getLocale(), $search->getTitle());
+
+                $this->breadcrumbs->getBreadcrumbs()
+                    ->addItem($this->adminTranslator->translate('page.pages_list'), $this->generateUrl('page_index'))
+                    ->addItem($this->adminTranslator->translate('page.search_results'));
+
+                return $this->render('@TwinElementsPage/search.html.twig', [
+                    'pages' => $pages,
+                    'searchForm' => $searchForm->createView(),
+                    'searchTitle' => $search->getTitle()
+                ]);
+            }
+
+            return $this->generateUrl('page_index', $request->query->all());
+
+        } catch (\Exception $exception) {
+            $this->flashes->errorMessage($exception->getMessage());
+
+            return $this->redirectToRoute('page_index');
+        }
     }
 
     /**
@@ -169,16 +206,26 @@ class PageController extends AbstractController
             }
         }
 
-        $this->breadcrumbs->setItems([
-            $this->adminTranslator->translate('page.pages_list') => $this->generateUrl('page_index'),
-            $page->getTitle() => null
-        ]);
+        $breadcrumbs = $this->breadcrumbs->getBreadcrumbs();
+        $breadcrumbs->addItem($this->adminTranslator->translate('page.pages_list'), $this->generateUrl('page_index'));
+        if (!is_null($page->getIsContentFor())) {
+            $breadcrumbs->addItem($page->getIsContentFor()->getTitle(), $this->generateUrl('page_edit', [
+                'id' => $page->getIsContentFor()->getId()
+            ]));
+        }
+        $breadcrumbs->addItem($page->getTitle(), null);
 
-        return $this->render('@TwinElementsPage/edit.html.twig', array(
+        $responseParameters = [
             'entity' => $page,
             'form' => $editForm->createView(),
             'delete_form' => $deleteForm->createView()
-        ));
+        ];
+
+        if ($page->getChildrenContents()->count() > 0) {
+            $responseParameters['sortable'] = Page::class;
+        }
+
+        return $this->render('@TwinElementsPage/edit.html.twig', $responseParameters);
     }
 
     /**

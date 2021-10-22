@@ -34,14 +34,41 @@ class PageRepository extends ServiceEntityRepository
         $qb = $this->createQueryBuilder('page');
 
         $qb
-            ->select(['page', 'page_translations'])
+            ->select(['page', 'page_translations', 'children'])
             ->leftJoin('page.translations', 'page_translations')
+            ->leftJoin('page.children', 'children')
             ->where(
                 $qb->expr()->isNull('page.isContentFor')
+            )
+            ->andWhere(
+                $qb->expr()->isNull('page.parent')
             )
             ->orderBy('page.position', 'asc');
 
         return $qb;
+    }
+
+    public function search(string $locale, string $search)
+    {
+        if (is_null($locale)) {
+            throw new Exception();
+        }
+
+        $qb = $this->createQueryBuilder('page');
+
+        $qb
+            ->select(['page', 'page_translations'])
+            ->join('page.translations', 'page_translations')
+            ->where('page_translations.locale = :locale')
+            ->andWhere(
+                $qb->expr()->like('page_translations.title', ':search')
+            )
+            ->setParameter('search', "%" . $search . "%")
+            ->setParameter('locale', $locale)
+            ->orderBy('page.position', 'asc');
+
+
+        return $qb->getQuery()->getResult();
     }
 
     public function findIndexListItems(string $locale)
@@ -135,8 +162,7 @@ class PageRepository extends ServiceEntityRepository
                 $qb->expr()->eq('t.enable', ':enable')
             )
             ->setParameter('enable', true)
-            ->orderBy('p.position', 'asc')
-        ;
+            ->orderBy('p.position', 'asc');
 
         if ($locale) {
             $qb

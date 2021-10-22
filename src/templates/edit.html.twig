@@ -2,14 +2,19 @@
 
 {% set back_button_link = path('page_index') %}
 
+{% block head_js %}
+    {{ block('sortable') }}
+{% endblock %}
+
 {% block title %}
     {% if entity.title %}
         {{ entity.title }}
     {% else %}
         {{ entity.translate(default_locale, false).title }}<br>
-        <span class="badge badge-warning small">{{ "cms.no_translation_for_this_locale"|trans({},null,admin_locale) }}</span>
+        <span class="badge badge-warning small">{{ "admin.no_translation_for_this_locale"|translate_admin }}</span>
     {% endif %}
 {% endblock %}
+
 {% block buttons %}
     {{ block('back_button') }}
 {% endblock %}
@@ -17,31 +22,66 @@
 {% block right_sidebar %}
     {{ block('changes_details') }}
 
-    {% if entity.isContentFor == null %}
-        {% if entity.route %}
-            <div class="cms-section">
-                <p>{{ "page.link_for_preview"|trans({},'messages',admin_locale) }}:
-                    <a class="label label-info"
-                       href="{{ path(entity.route) }}">{{ entity.title }}</a></p>
+    {% if entity.childrenContents.count > 0 %}
+        <div class="">
+            <div class="d-flex justify-content-between align-items-center mb-6">
+                <h5 class="mb-0">{{ "page.contents"|translate_admin }}:</h5>
+                {% if is_granted('ROLE_SUPER_ADMIN') %}
+                    <a class="btn btn-outline-primary btn-sm rounded-pill"
+                       href="{{ path('page_add_new_content', {'id': entity.id}) }}">{{ "page.add_a_new_content"|translate_admin }}</a>
+                {% endif %}
             </div>
-        {% elseif entity.enable and entity.slug %}
+
+            <div class="list-group sortable">
+                {% for content in entity.childrenContents %}
+
+                    {% if is_granted(constant('TwinElements\\PageBundle\\Security\\PageVoter::EDIT'),content) %}
+                        {% set contentUrl = path('page_edit', { 'id': content.id }) %}
+                    {% endif %}
+
+                    <div data-id="{{ content.id }}" class="sortable-item list-group-item list-group-item-action  d-flex justify-content-between align-items-center">
+                        <a {% if contentUrl is defined %}href="{{ contentUrl }}" {% endif %}>
+                            <span>{{ content.title }}</span>
+                            {% if content.title is null %}
+                                <span class="badge badge-warning">{{ "admin.no_translation"|translate_admin }}</span>
+                            {% endif %}
+                        </a>
+                        {% if not content.enable %}
+                            <span class="badge badge-danger">{{ "page.disabled"|translate_admin }}</span>
+                        {% endif %}
+                        {{ block('move') }}
+                    </div>
+                {% endfor %}
+            </div>
+        </div>
+    {% endif %}
+
+    {% if entity.isContentFor == null %}
+        {% if entity.enable %}
+            {% if entity.route %}
+                {% set page_url = path(entity.route) %}
+            {% else %}
+                {% set page_url = path('front_page', { 'slug': entity.slug, 'id': entity.id }) %}
+            {% endif %}
             <div class="cms-section">
-                <p>{{ "page.link_for_preview"|trans({},'messages',admin_locale) }}:
-                    <a class="label label-info"
-                       href="{{ path('front_page', {'slug':entity.slug, 'id': entity.id}) }}">{{ entity.title }}</a></p>
+                <p>{{ "page.link_for_preview"|translate_admin }}:
+                    <a class="badge badge-info"
+                       href="{{ page_url }}">{{ "actions.show"|translate_admin }}</a></p>
             </div>
         {% endif %}
-        {% else %}
-            <div class="cms-section">
-                <p>To jest treść dla podstrony: <span class="badge badge-info">{% if entity.isContentFor.title %}{{ entity.isContentFor.title }}{% else %}{{ entity.isContentFor.translate(default_locale, false).title }}{% endif %}</span></p>
-            </div>
+    {% else %}
+        <div class="cms-section">
+            <p>{{ "page.this_is_the_content_for"|translate_admin }}: <span
+                        class="badge badge-info">{% if entity.isContentFor.title %}{{ entity.isContentFor.title }}{% else %}{{ entity.isContentFor.translate(default_locale, false).title }}{% endif %}</span>
+            </p>
+        </div>
     {% endif %}
 
     {% if entity.route == '' %}
         {{ block('delete_form') }}
     {% endif %}
 
-    {% set file_path = entity.cover %}
+    {% set file_path = entity.image %}
     {% set section_title = 'Obrazek wyróżniający' %}
     {{ block('single_image_preview_template') }}
 

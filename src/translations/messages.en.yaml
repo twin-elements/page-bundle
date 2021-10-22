@@ -5,3 +5,11 @@ page:
   adding_a_new_page: Create a new page
   this_page_has_a_module: A subpage cannot be deleted, because a module is assigned to it
   link_for_preview: Preview link
+  disabled: Disabled
+  contents: Contents
+  this_is_the_content_for: This is the content for
+
+role:
+  role_page_view: Pages (view)
+  role_page_edit: Pages (edit)
+  role_page_full: Pages (full)

@@ -3,5 +3,15 @@ page:
   pages: Страницы
   pages_list: Список страниц
   adding_a_new_page: Создать страницу
+  add_a_new_content: Создать новый содержимое
+  adding_a_new_content: Создание нового содержимого
   this_page_has_a_module: Страницу нельзя удалить, так как к ней привязан модуль
   link_for_preview: Предварительный просмотр
+  disabled: Выключена
+  contents: Содержимое
+  this_is_the_content_for: Это сожержимое для страницы
+
+role:
+  role_page_view: Страницы (просмотр)
+  role_page_edit: Страницы (редактирование)
+  role_page_full: Страницы (полный)

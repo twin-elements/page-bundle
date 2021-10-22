@@ -7,6 +7,11 @@ page:
   adding_a_new_content: Tworzenie nowej treści
   this_page_has_a_module: Nie można skasować podstrony, ponieważ jest do niej przypisany moduł.
   link_for_preview: Link do podglądu
+  disabled: Nieaktywna
+  contents: Treści
+  this_is_the_content_for: To jest treść dla podstrony
+  search_results: "Wyniki wyszukiwania"
+  search_results_by: "Wyniki wyszukiwania według"
 
 role:
   role_page_view: Strony (przeglądanie)

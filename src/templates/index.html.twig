@@ -1,4 +1,5 @@
 {% extends '@TwinElementsAdmin/core/list.html.twig' %}
+{% use '@TwinElementsPage/admin_blocks.html.twig' %}
 
 {% set add_button_link = path('page_new') %}
 
@@ -39,6 +40,58 @@
     </div>
 {% endblock %}
 
+{% block generate_recursive_children %}
+    {% set actualLvl = lvl %}
+    {{ block('list_ul_begin') }}
+        {% for child in children %}
+
+            {% set createdAt = child.createdAt %}
+            {% set createdBy = child.createdBy %}
+            {% set updatedAt = child.updatedAt %}
+            {% set updatedBy = child.updatedBy %}
+
+            {% set id = child.id %}
+            {% set circle_active = child.enable %}
+
+            {{ block('list_li_begin') }}
+            {{ block('id') }}
+            <div class="col">
+                <div class="title">
+                    {% if is_granted(constant('TwinElements\\PageBundle\\Security\\PageVoter::EDIT'), child) %}
+                        {% set editUrl = path('page_edit', { 'id': child.id }) %}
+                    {% endif %}
+                    <a {% if editUrl is defined %}href="{{ editUrl }}"{% endif %}>
+                        {% if actualLvl > 0 %}
+                            {% for i in 1..actualLvl %}
+                                <span class="arrow-right"></span>
+                            {% endfor %}
+                        {% endif %}
+                        <span>{{ child.title }}</span>
+                        {% if child.title is null %}
+                            <span class="badge badge-warning">{{ "admin.no_translation"|translate_admin }}</span>
+                        {% endif %}
+                    </a>
+                    {% if is_granted('ROLE_SUPER_ADMIN') %}
+                        <span class="circle-separator"></span>
+                        <a class="btn btn-outline-primary btn-sm rounded-pill"
+                           href="{{ path('page_add_new_content', {'id': child.id}) }}">{{ "page.add_a_new_content"|translate_admin }}</a>
+                    {% endif %}
+                </div>
+            </div>
+            {{ block('changes_box_in_list') }}
+            {{ block('circle') }}
+            {{ block('move') }}
+            {% if child.children.count > 0 %}
+                {% set lvl = actualLvl + 1 %}
+                {% set children = child.children %}
+                {{ block("generate_recursive_children") }}
+            {% endif %}
+            {{ block('list_li_end') }}
+
+        {% endfor %}
+    {{ block('list_ul_end') }}
+{% endblock %}
+
 {% block list %}
     {{ block('list_ul_begin') }}
     {{ block('list_li_header_begin') }}
@@ -61,74 +114,31 @@
         {{ block('id') }}
         <div class="col">
             <div class="title">
-                <span>{{ entity.title }}</span>
-                {% if entity.title is null %}
-                    <span class="badge badge-warning">{{ "admin.no_translation"|translate_admin }}</span>
+                {% if is_granted(constant('TwinElements\\PageBundle\\Security\\PageVoter::EDIT'), entity) %}
+                    {% set editUrl = path('page_edit', { 'id': entity.id }) %}
                 {% endif %}
-                <br>
-                <div class="hidden-bar">
-                    {% if entity.enable %}
-                        {% if entity.route %}
-                            {% set page_url = path(entity.route) %}
-                        {% else %}
-                            {% set page_url = path('front_page', { 'slug': entity.slug, 'id': entity.id }) %}
-                        {% endif %}
-                        <a href="{{ page_url }}" target="_blank">{{ "actions.show"|translate_admin }}</a>
+                <a {% if editUrl is defined %}href="{{ editUrl }}"{% endif %}>
+                    <span>{{ entity.title }}</span>
+                    {% if entity.title is null %}
+                        <span class="badge badge-warning">{{ "admin.no_translation"|translate_admin }}</span>
                     {% endif %}
-                    {% if is_granted(constant('TwinElements\\PageBundle\\Security\\PageVoter::VIEW'), entity) %}
-                        <span class="circle-separator"></span>
-                        <a href="{{ path('page_edit', { 'id': entity.id }) }}">{{ "admin.edit"|translate_admin }}</a>
-                    {% endif %}
-                    {% if is_granted('ROLE_SUPER_ADMIN') %}
-                        <span class="circle-separator"></span>
-                        <a href="{{ path('page_add_new_content', {'id': entity.id}) }}">{{ "page.add_a_new_content"|translate_admin }}</a>
-                    {% endif %}
-                </div>
+                </a>
+                {% if is_granted('ROLE_SUPER_ADMIN') %}
+                    <span class="circle-separator"></span>
+                    <a class="btn btn-outline-primary btn-sm rounded-pill"
+                       href="{{ path('page_add_new_content', {'id': entity.id}) }}">{{ "page.add_a_new_content"|translate_admin }}</a>
+                {% endif %}
             </div>
         </div>
         {{ block('changes_box_in_list') }}
         {{ block('circle') }}
         {{ block('move') }}
-        {{ block('list_li_end') }}
-        {% if entity.childrenContents.count > 0 %}
-            <div class="bg-light row">
-                <div class="col">
-                    <p class="mb-0 mt-3 font-weight-bold">Treści:</p>
-                    {{ block('list_ul_begin') }}
-                        {% for content in entity.childrenContents %}
-                            {% set createdAt = content.createdAt %}
-                            {% set createdBy = content.createdBy %}
-                            {% set updatedAt = content.updatedAt %}
-                            {% set updatedBy = content.updatedBy %}
-                            {% set id = content.id %}
-                            {% set circle_active = content.enable %}
-                            {{ block('list_li_begin') }}
-                            {{ block('id') }}
-                            <div class="col">
-                                <div class="title">
-                                    <span>{{ content.title }}</span>
-                                    {% if content.title is null %}
-                                        <span class="badge badge-warning">{{ "admin.no_translation"|translate_admin }}</span>
-                                    {% endif %}
-                                    <br>
-                                    <div class="hidden-bar">
-                                        {% if is_granted(constant('TwinElements\\PageBundle\\Security\\PageVoter::EDIT'),content) %}
-                                            <a href="{{ path('page_edit', { 'id': content.id }) }}">{{ "admin.edit"|translate_admin }}</a>
-                                        {% endif %}
-                                    </div>
-                                </div>
-                            </div>
-                            {{ block('changes_box_in_list') }}
-                            {{ block('circle') }}
-                            {{ block('move') }}
-                            {{ block('list_li_end') }}
-
-                        {% endfor %}
-                    {{ block('list_ul_end') }}
-                </div>
-            </div>
+        {% if entity.children.count > 0 %}
+            {% set lvl = 1 %}
+            {% set children = entity.children %}
+            {{ block('generate_recursive_children') }}
         {% endif %}
-
+        {{ block('list_li_end') }}
     {% else %}
         {{ block('no_elements') }}
     {% endfor %}

@@ -1,0 +1,69 @@
+{% extends '@TwinElementsAdmin/core/list.html.twig' %}
+
+{% set back_button_link = path('page_index') %}
+
+{% block title %}{{ "page.search_results"|translate_admin }}{% endblock %}
+{% block buttons %}
+    {{ block('back_button') }}
+{% endblock %}
+
+{% block top_sidebar %}
+    {% set queryParams = app.request.query.all %}
+    <div class="d-flex align-items-center justify-content-between mb-6">
+        <p class="mb-0">
+            {{ "page.search_results_by"|translate_admin }}: <span class="font-weight-bold">{{ searchTitle }}</span>
+        </p>
+        <div class="flex-grow-1"></div>
+        <div>
+            {% form_theme searchForm 'bootstrap_4_layout.html.twig' %}
+            {{ form_start(searchForm) }}
+            <div class="d-flex align-items-center">
+                {{ form_widget(searchForm.title) }}
+                {{ form_widget(searchForm.button) }}
+            </div>
+            {{ form_end(searchForm) }}
+        </div>
+    </div>
+{% endblock %}
+
+{% block list %}
+    {{ block('list_ul_begin') }}
+        {{ block('list_li_header_begin') }}
+        {{ block('id_header') }}
+        <div class="col">{{ "admin.title"|translate_admin }}</div>
+        {{ block('list_changes_header') }}
+        {{ block('circle_header') }}
+        {{ block('list_li_header_end') }}
+        {% for entity in pages %}
+            {% set createdAt = entity.createdAt %}
+            {% set createdBy = entity.createdBy %}
+            {% set updatedAt = entity.updatedAt %}
+            {% set updatedBy = entity.updatedBy %}
+
+            {% set id = entity.id %}
+            {% set circle_active = entity.enable %}
+
+            {{ block('list_li_begin') }}
+            {{ block('id') }}
+            <div class="col">
+                <div class="title">
+                    {% if is_granted(constant('TwinElements\\PageBundle\\Security\\PageVoter::EDIT'), entity) %}
+                        {% set editPath = path('page_edit', { 'id': entity.id }) %}
+                    {% endif %}
+                    <a {% if editPath is defined %}href="{{ editPath }}"{% endif %}>
+                        <span>{{ entity.title }}</span>
+                        {% if entity.title is null %}
+                            <span class="badge badge-warning">{{ "admin.no_translation"|translate_admin }}</span>
+                        {% endif %}
+                    </a>
+                </div>
+            </div>
+            {{ block('changes_box_in_list') }}
+            {{ block('circle') }}
+        {{ block('list_li_end') }}
+    {% else %}
+        {{ block('no_elements') }}
+    {% endfor %}
+    {{ block('list_ul_end') }}
+
+{% endblock %}
