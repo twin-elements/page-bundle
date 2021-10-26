@@ -128,8 +128,13 @@ class PageController extends AbstractController
             $this->denyAccessUnlessGranted(PageVoter::FULL, new Page());
 
             $page = new Page();
+            if($request->query->has('is_separate_content')){
+                $page->setIsSeparateContent(true);
+            }
             $page->setCurrentLocale($request->getLocale());
-            $form = $this->createForm(PageType::class, $page);
+            $form = $this->createForm(PageType::class, $page, [
+                'is_content' => ($page->isSeparateContent() ? true : false)
+            ]);
             $form->handleRequest($request);
 
             if ($form->isSubmitted() && $form->isValid()) {
@@ -182,7 +187,7 @@ class PageController extends AbstractController
 
         $deleteForm = $this->createDeleteForm($page);
         $editForm = $this->createForm(PageType::class, $page, [
-            'is_content' => (is_null($page->getIsContentFor()) ? false : true)
+            'is_content' => ((!is_null($page->getIsContentFor()) || $page->isSeparateContent()) ? true : false)
         ]);
         $editForm->handleRequest($request);
 

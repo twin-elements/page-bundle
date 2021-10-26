@@ -1,4 +1,5 @@
 {% extends '@TwinElementsAdmin/core/details_with_sidebar.html.twig' %}
+{% use '@TwinElementsPage/admin_blocks.html.twig' %}
 
 {% set back_button_link = path('page_index') %}
 
@@ -54,27 +55,34 @@
                 {% endfor %}
             </div>
         </div>
+        {% else %}
+            {% if not entity.isSeparateContent and  is_granted('ROLE_SUPER_ADMIN') %}
+                <a class="btn btn-outline-primary btn-sm rounded-pill"
+                   href="{{ path('page_add_new_content', {'id': entity.id}) }}">{{ "page.add_a_new_content"|translate_admin }}</a>
+            {% endif %}
     {% endif %}
 
-    {% if entity.isContentFor == null %}
-        {% if entity.enable %}
-            {% if entity.route %}
-                {% set page_url = path(entity.route) %}
-            {% else %}
-                {% set page_url = path('front_page', { 'slug': entity.slug, 'id': entity.id }) %}
+    {% if entity.isSeparateContent is null %}
+        {% if entity.isContentFor is null %}
+            {% if entity.enable %}
+                {% if entity.route %}
+                    {% set page_url = path(entity.route) %}
+                {% else %}
+                    {% set page_url = path('front_page', { 'slug': entity.slug, 'id': entity.id }) %}
+                {% endif %}
+                <div class="cms-section">
+                    <p>{{ "page.link_for_preview"|translate_admin }}:
+                        <a class="badge badge-info"
+                           href="{{ page_url }}">{{ "actions.show"|translate_admin }}</a></p>
+                </div>
             {% endif %}
+        {% else %}
             <div class="cms-section">
-                <p>{{ "page.link_for_preview"|translate_admin }}:
-                    <a class="badge badge-info"
-                       href="{{ page_url }}">{{ "actions.show"|translate_admin }}</a></p>
+                <p>{{ "page.this_is_the_content_for"|translate_admin }}: <span
+                            class="badge badge-info">{% if entity.isContentFor.title %}{{ entity.isContentFor.title }}{% else %}{{ entity.isContentFor.translate(default_locale, false).title }}{% endif %}</span>
+                </p>
             </div>
         {% endif %}
-    {% else %}
-        <div class="cms-section">
-            <p>{{ "page.this_is_the_content_for"|translate_admin }}: <span
-                        class="badge badge-info">{% if entity.isContentFor.title %}{{ entity.isContentFor.title }}{% else %}{{ entity.isContentFor.translate(default_locale, false).title }}{% endif %}</span>
-            </p>
-        </div>
     {% endif %}
 
     {% if entity.route == '' %}

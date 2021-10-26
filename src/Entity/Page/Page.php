@@ -80,6 +80,12 @@ class Page implements TranslatableInterface, BlameableInterface, TimestampableIn
      */
     private $childrenContents;
 
+    /**
+     * @var bool
+     * @ORM\Column(type="boolean")
+     */
+    private $isSeparateContent = false;
+
     public function __construct()
     {
         $this->children = new ArrayCollection();
@@ -268,12 +274,27 @@ class Page implements TranslatableInterface, BlameableInterface, TimestampableIn
     public function removeChildrenContent(Page $childrenContent): self
     {
         if ($this->childrenContents->removeElement($childrenContent)) {
-            // set the owning side to null (unless already changed)
             if ($childrenContent->getIsContentFor() === $this) {
                 $childrenContent->setIsContentFor(null);
             }
         }
 
         return $this;
+    }
+
+    /**
+     * @return bool
+     */
+    public function isSeparateContent(): bool
+    {
+        return $this->isSeparateContent;
+    }
+
+    /**
+     * @param bool $isSeparateContent
+     */
+    public function setIsSeparateContent(bool $isSeparateContent): void
+    {
+        $this->isSeparateContent = $isSeparateContent;
     }
 }

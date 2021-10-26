@@ -6,6 +6,11 @@
 {% block title %}{{ "page.pages"|translate_admin }}{% endblock %}
 {% block buttons %}
     {{ block('add_button') }}
+    {% if is_granted('ROLE_SUPER_ADMIN') %}
+        {% set link = path('page_new', {'is_separate_content': true}) %}
+        {% set name = 'Dodaj samodzielną treść' %}
+        {{ block('primary_link') }}
+    {% endif %}
 {% endblock %}
 
 {% block top_sidebar %}
@@ -123,7 +128,7 @@
                         <span class="badge badge-warning">{{ "admin.no_translation"|translate_admin }}</span>
                     {% endif %}
                 </a>
-                {% if is_granted('ROLE_SUPER_ADMIN') %}
+                {% if not entity.isSeparateContent and is_granted('ROLE_SUPER_ADMIN') %}
                     <span class="circle-separator"></span>
                     <a class="btn btn-outline-primary btn-sm rounded-pill"
                        href="{{ path('page_add_new_content', {'id': entity.id}) }}">{{ "page.add_a_new_content"|translate_admin }}</a>

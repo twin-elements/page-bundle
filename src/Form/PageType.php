@@ -37,7 +37,7 @@ class PageType extends AbstractType
 
     public function __construct(
         AuthorizationCheckerInterface $authorizationChecker,
-        AdminTranslator $translator)
+        AdminTranslator               $translator)
     {
         $this->translator = $translator;
         $this->authorizationChecker = $authorizationChecker;
@@ -89,7 +89,11 @@ class PageType extends AbstractType
                         ->setParameter('active', true)
                         ->andWhere(
                             $qb->expr()->isNull('p.isContentFor')
-                        );
+                        )
+                        ->andWhere(
+                            $qb->expr()->eq('p.isSeparateContent', ':false')
+                        )
+                        ->setParameter('false', false);
 
                     return $qb;
                 },
