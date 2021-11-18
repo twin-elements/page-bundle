@@ -128,7 +128,7 @@
                         <span class="badge badge-warning">{{ "admin.no_translation"|translate_admin }}</span>
                     {% endif %}
                 </a>
-                {% if not entity.isSeparateContent and is_granted('ROLE_SUPER_ADMIN') %}
+                {% if is_granted('ROLE_SUPER_ADMIN') %}
                     <span class="circle-separator"></span>
                     <a class="btn btn-outline-primary btn-sm rounded-pill"
                        href="{{ path('page_add_new_content', {'id': entity.id}) }}">{{ "page.add_a_new_content"|translate_admin }}</a>

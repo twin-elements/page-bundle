@@ -40,7 +40,8 @@
                         {% set contentUrl = path('page_edit', { 'id': content.id }) %}
                     {% endif %}
 
-                    <div data-id="{{ content.id }}" class="sortable-item list-group-item list-group-item-action  d-flex justify-content-between align-items-center">
+                    <div data-id="{{ content.id }}"
+                         class="sortable-item list-group-item list-group-item-action  d-flex justify-content-between align-items-center">
                         <a {% if contentUrl is defined %}href="{{ contentUrl }}" {% endif %}>
                             <span>{{ content.title }}</span>
                             {% if content.title is null %}
@@ -55,32 +56,33 @@
                 {% endfor %}
             </div>
         </div>
-        {% else %}
-            {% if not entity.isSeparateContent and  is_granted('ROLE_SUPER_ADMIN') %}
-                <a class="btn btn-outline-primary btn-sm rounded-pill"
-                   href="{{ path('page_add_new_content', {'id': entity.id}) }}">{{ "page.add_a_new_content"|translate_admin }}</a>
-            {% endif %}
+    {% else %}
+        {% if not entity.isSeparateContent and  is_granted('ROLE_SUPER_ADMIN') %}
+            <a class="btn btn-outline-primary btn-sm rounded-pill"
+               href="{{ path('page_add_new_content', {'id': entity.id}) }}">{{ "page.add_a_new_content"|translate_admin }}</a>
+        {% endif %}
     {% endif %}
 
-    {% if entity.isSeparateContent is null %}
-        {% if entity.isContentFor is null %}
-            {% if entity.enable %}
-                {% if entity.route %}
-                    {% set page_url = path(entity.route) %}
-                {% else %}
-                    {% set page_url = path('front_page', { 'slug': entity.slug, 'id': entity.id }) %}
-                {% endif %}
-                <div class="cms-section">
-                    <p>{{ "page.link_for_preview"|translate_admin }}:
-                        <a class="badge badge-info"
-                           href="{{ page_url }}">{{ "actions.show"|translate_admin }}</a></p>
-                </div>
-            {% endif %}
-        {% else %}
+
+    {% if entity.separateContent %}
+        {% if entity.isContentFor %}
             <div class="cms-section">
                 <p>{{ "page.this_is_the_content_for"|translate_admin }}: <span
                             class="badge badge-info">{% if entity.isContentFor.title %}{{ entity.isContentFor.title }}{% else %}{{ entity.isContentFor.translate(default_locale, false).title }}{% endif %}</span>
                 </p>
+            </div>
+        {% endif %}
+    {% else %}
+        {% if entity.enable %}
+            {% if entity.route %}
+                {% set page_url = path(entity.route) %}
+            {% else %}
+                {% set page_url = pagePath(entity.id,entity.slug) %}
+            {% endif %}
+            <div class="cms-section">
+                <p>{{ "page.link_for_preview"|translate_admin }}:
+                    <a class="badge badge-info"
+                       href="{{ page_url }}">{{ "actions.show"|translate_admin }}</a></p>
             </div>
         {% endif %}
     {% endif %}

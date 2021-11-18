@@ -128,7 +128,7 @@ class PageController extends AbstractController
             $this->denyAccessUnlessGranted(PageVoter::FULL, new Page());
 
             $page = new Page();
-            if($request->query->has('is_separate_content')){
+            if ($request->query->has('is_separate_content')) {
                 $page->setIsSeparateContent(true);
             }
             $page->setCurrentLocale($request->getLocale());
@@ -242,6 +242,9 @@ class PageController extends AbstractController
         $parent = $repository->find($id);
         $page = new Page();
         $page->setIsContentFor($parent);
+        if ($parent->isSeparateContent()) {
+            $page->setIsSeparateContent(true);
+        }
         $page->setCurrentLocale($request->getLocale());
         $form = $this->createForm(PageType::class, $page, [
             'is_content' => true
