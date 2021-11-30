@@ -84,8 +84,15 @@ class PageRepository extends ServiceEntityRepository
             ->join('page.translations', 'page_translations')
             ->where('page_translations.locale = :locale')
             ->andWhere(
-                $qb->expr()->isNull('page.isContentFor')
+                $qb->expr()->not(
+                    $qb->expr()->orX(
+                        $qb->expr()->isNotNull('page.isContentFor'),
+                        $qb->expr()->eq('page.isSeparateContent', ':true')
+                    )
+                )
             )
+
+            ->setParameter('true', true)
             ->setParameter('locale', $locale)
             ->orderBy('page.position', 'asc');
 
