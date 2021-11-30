@@ -147,7 +147,7 @@ class PageController extends AbstractController
 
                 $this->crudLogger->createLog($page->getId(), $page->getTitle());
 
-                $this->flashes->successMessage();
+                $this->flashes->successMessage($this->adminTranslator->translate('admin.success_operation'));;
 
                 if ('save' === $form->getClickedButton()->getName()) {
                     return $this->redirectToRoute('page_edit', array('id' => $page->getId()));
@@ -199,7 +199,7 @@ class PageController extends AbstractController
                 $em->flush();
                 $this->crudLogger->createLog($page->getId(), $page->getTitle());
 
-                $this->flashes->successMessage();
+                $this->flashes->successMessage($this->adminTranslator->translate('admin.success_operation'));;
             } catch (\Exception $exception) {
                 $this->flashes->errorMessage($exception->getMessage());
             }
@@ -259,7 +259,7 @@ class PageController extends AbstractController
                 $em->flush();
 
                 $this->crudLogger->createLog($page->getId(), $page->getTitle());
-                $this->flashes->successMessage();
+                $this->flashes->successMessage($this->adminTranslator->translate('admin.success_operation'));;
 
                 if ('save' === $form->getClickedButton()->getName()) {
                     return $this->redirectToRoute('page_edit', array('id' => $page->getId()));
@@ -307,7 +307,7 @@ class PageController extends AbstractController
 
                 $this->crudLogger->createLog($id, $title);
 
-                $this->flashes->successMessage();
+                $this->flashes->successMessage($this->adminTranslator->translate('admin.success_operation'));;
             } catch (\Exception $exception) {
                 $this->flashes->errorMessage($exception->getMessage());
             }
