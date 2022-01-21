@@ -186,7 +186,7 @@ class PageRepository extends ServiceEntityRepository
      * @param ?string $locale
      * @return Page[]|null
      */
-    public function findContentByParent(int $id, ?string $locale = null): ?array
+    public function findContentByParent(int $parentId, ?string $locale = null): ?array
     {
         $qb = $this->createQueryBuilder('p')
             ->select('p', 't')
@@ -194,9 +194,9 @@ class PageRepository extends ServiceEntityRepository
 
         $qb
             ->where(
-                $qb->expr()->eq('p.id', ':id')
+                $qb->expr()->eq('p.isContentFor', ':parentId')
             )
-            ->setParameter('id', $id)
+            ->setParameter('id', $parentId)
             ->andWhere(
                 $qb->expr()->eq('t.enable', ':enable')
             )
