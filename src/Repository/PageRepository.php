@@ -196,7 +196,7 @@ class PageRepository extends ServiceEntityRepository
             ->where(
                 $qb->expr()->eq('p.isContentFor', ':parentId')
             )
-            ->setParameter('id', $parentId)
+            ->setParameter('parentId', $parentId)
             ->andWhere(
                 $qb->expr()->eq('t.enable', ':enable')
             )
