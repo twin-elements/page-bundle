@@ -91,7 +91,6 @@ class PageRepository extends ServiceEntityRepository
                     )
                 )
             )
-
             ->setParameter('true', true)
             ->setParameter('locale', $locale)
             ->orderBy('page.position', 'asc');
@@ -165,6 +164,39 @@ class PageRepository extends ServiceEntityRepository
                 $qb->expr()->eq('p.code', ':code')
             )
             ->setParameter('code', $code)
+            ->andWhere(
+                $qb->expr()->eq('t.enable', ':enable')
+            )
+            ->setParameter('enable', true)
+            ->orderBy('p.position', 'asc');
+
+        if ($locale) {
+            $qb
+                ->andWhere(
+                    $qb->expr()->eq('t.locale', ':locale')
+                )
+                ->setParameter('locale', $locale);
+        }
+
+        return $qb->getQuery()->getResult();
+    }
+
+    /**
+     * @param int $id
+     * @param ?string $locale
+     * @return Page[]|null
+     */
+    public function findContentByParent(int $id, ?string $locale = null): ?array
+    {
+        $qb = $this->createQueryBuilder('p')
+            ->select('p', 't')
+            ->leftJoin('p.translations', 't');
+
+        $qb
+            ->where(
+                $qb->expr()->eq('p.id', ':id')
+            )
+            ->setParameter('id', $id)
             ->andWhere(
                 $qb->expr()->eq('t.enable', ':enable')
             )
