@@ -50,6 +50,12 @@ class PageTranslation implements TranslationInterface, ImageAlbumInterface, Atta
     private $content;
 
     /**
+     * @var string|null
+     * @ORM\Column(type="string", length=255, nullable=true)
+     */
+    private $redirect;
+
+    /**
      * @return mixed
      */
     public function getTeaser()
@@ -97,6 +103,22 @@ class PageTranslation implements TranslationInterface, ImageAlbumInterface, Atta
     public function setCover(?string $cover): void
     {
         $this->image = $cover;
+    }
+
+    /**
+     * @return string|null
+     */
+    public function getRedirect(): ?string
+    {
+        return $this->redirect;
+    }
+
+    /**
+     * @param string|null $redirect
+     */
+    public function setRedirect(?string $redirect): void
+    {
+        $this->redirect = $redirect;
     }
 
 }

@@ -8,6 +8,8 @@ page:
   disabled: Disabled
   contents: Contents
   this_is_the_content_for: This is the content for
+  redirect: Redirect
+  redirect_help: Redirecting does not change the link to a given subpage! Use this functionality only when necessary.
 
 role:
   role_page_view: Pages (view)

@@ -3,6 +3,7 @@
 namespace TwinElements\PageBundle\Form;
 
 use TwinElements\FormExtensions\Type\FileWithTitleType;
+use TwinElements\FormExtensions\Type\TEChooseLinkType;
 use TwinElements\PageBundle\Entity\Page\Page;
 use Doctrine\ORM\EntityRepository;
 use Symfony\Component\Form\AbstractType;
@@ -122,7 +123,13 @@ class PageType extends AbstractType
                 'required' => false
             ]);
         }
-
+        if (!$options['is_content']) {
+            $builder
+                ->add('redirect', TEChooseLinkType::class, [
+                    'label' => $this->translator->translate('page.redirect'),
+                    'help' => $this->translator->translate('page.redirect_help')
+                ]);
+        }
         $builder->add('buttons', SaveButtonsType::class);
     }
 

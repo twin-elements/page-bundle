@@ -12,6 +12,8 @@ page:
   this_is_the_content_for: To jest treść dla podstrony
   search_results: "Wyniki wyszukiwania"
   search_results_by: "Wyniki wyszukiwania według"
+  redirect: Przekierowanie
+  redirect_help: Ustawienie przekierowania nie zmienia linku do danej podstrony! Należy korzystać z tej funkcjonalności tylko w razie konieczności.
 
 role:
   role_page_view: Strony (przeglądanie)

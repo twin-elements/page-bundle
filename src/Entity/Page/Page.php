@@ -297,4 +297,20 @@ class Page implements TranslatableInterface, BlameableInterface, TimestampableIn
     {
         $this->isSeparateContent = $isSeparateContent;
     }
+
+    /**
+     * @return string|null
+     */
+    public function getRedirect(): ?string
+    {
+        return $this->translate(null, false)->getRedirect();
+    }
+
+    /**
+     * @param string|null $redirect
+     */
+    public function setRedirect(?string $redirect): void
+    {
+        $this->translate(null, false)->setRedirect($redirect);
+    }
 }
