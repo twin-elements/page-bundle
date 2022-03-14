@@ -3,6 +3,7 @@
 namespace TwinElements\PageBundle\Form;
 
 use TwinElements\FormExtensions\Type\FileWithTitleType;
+use TwinElements\FormExtensions\Type\ImageAlbumType;
 use TwinElements\FormExtensions\Type\TEChooseLinkType;
 use TwinElements\PageBundle\Entity\Page\Page;
 use Doctrine\ORM\EntityRepository;
@@ -63,15 +64,7 @@ class PageType extends AbstractType
                 'label' => 'Obrazek wyróżniający',
                 'required' => false
             ])
-            ->add('imageAlbum', TECollectionType::class, [
-                'entry_type' => FileWithTitleType::class,
-                'entry_options' => [
-                    'file_type' => 'image',
-                    'label' => $this->translator->translate('admin_type.image_album.choose_image')
-                ],
-                'min' => 0,
-                'label' => $this->translator->translate('admin_type.image_album.image_album')
-            ])
+            ->add('imageAlbum', ImageAlbumType::class)
             ->add('attachments', AttachmentsType::class);
 
         if (!$options['is_content']) {
