@@ -2,8 +2,8 @@
 
 namespace TwinElements\PageBundle\Controller\Admin;
 
-use TwinElements\AdminBundle\Entity\Traits\PositionInterface;
 use TwinElements\AdminBundle\Model\CrudControllerTrait;
+use TwinElements\Component\ResponseParameterBuilder\ResponseParameterBuilder;
 use TwinElements\PageBundle\Entity\Page\Page;
 use TwinElements\PageBundle\Entity\SearchPage;
 use TwinElements\PageBundle\Form\PageType;
@@ -14,6 +14,7 @@ use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\HttpFoundation\Request;
 use TwinElements\PageBundle\Security\PageVoter;
+use TwinElements\SortableBundle\SortableResponseParametersPreparer;
 use function Doctrine\ORM\QueryBuilder;
 
 
@@ -28,7 +29,10 @@ class PageController extends AbstractController
     /**
      * @Route("/", name="page_index", methods={"GET","POST"})
      */
-    public function index(Request $request, PaginatorInterface $paginator, PageRepository $pageRepository)
+    public function index(
+        Request $request,
+        PaginatorInterface $paginator,
+        PageRepository $pageRepository)
     {
         try {
             $entity = new Page();
@@ -57,17 +61,15 @@ class PageController extends AbstractController
                 $this->adminTranslator->translate('page.pages_list') => null
             ]);
 
-            $responseParameters = [
-                'pages' => $pages,
-                'limit' => $limit,
-                'searchForm' => $searchForm->createView()
-            ];
+            $responseParameters = new ResponseParameterBuilder();
+            $responseParameters
+                ->addParameter('pages',$pages)
+                ->addParameter('limit', $limit)
+                ->addParameter('searchForm', $searchForm->createView());
 
-            if ((new \ReflectionClass(Page::class))->implementsInterface(PositionInterface::class)) {
-                $responseParameters['sortable'] = Page::class;
-            }
+            SortableResponseParametersPreparer::prepare($responseParameters, Page::class);
 
-            return $this->render('@TwinElementsPage/index.html.twig', $responseParameters);
+            return $this->render('@TwinElementsPage/index.html.twig', $responseParameters->getParameters());
         } catch (\Exception $exception) {
             $this->flashes->errorMessage($exception->getMessage());
 

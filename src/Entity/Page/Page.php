@@ -3,7 +3,6 @@
 namespace TwinElements\PageBundle\Entity\Page;
 
 use TwinElements\AdminBundle\Entity\Traits\IdTrait;
-use TwinElements\AdminBundle\Entity\Traits\PositionInterface;
 use TwinElements\AdminBundle\Entity\Traits\TranslatableAttachmentsTrait;
 use TwinElements\AdminBundle\Entity\Traits\TranslatableContentTrait;
 use TwinElements\AdminBundle\Entity\Traits\TranslatableImageAlbumTrait;
@@ -13,7 +12,6 @@ use TwinElements\AdminBundle\Entity\Traits\TranslatableTitleSlug;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
-use TwinElements\AdminBundle\Entity\Traits\PositionTrait;
 use Knp\DoctrineBehaviors\Contract\Entity\BlameableInterface;
 use Knp\DoctrineBehaviors\Contract\Entity\LoggableInterface;
 use Knp\DoctrineBehaviors\Contract\Entity\TimestampableInterface;
@@ -24,6 +22,8 @@ use Knp\DoctrineBehaviors\Model\Timestampable\TimestampableTrait;
 use Knp\DoctrineBehaviors\Model\Translatable\TranslatableTrait;
 use TwinElements\SeoBundle\Model\SeoInterface;
 use TwinElements\SeoBundle\Model\SeoTranslatableTrait;
+use TwinElements\SortableBundle\Entity\PositionInterface;
+use TwinElements\SortableBundle\Model\PositionTrait;
 
 /**
  * @ORM\Entity(repositoryClass="TwinElements\PageBundle\Repository\PageRepository")
