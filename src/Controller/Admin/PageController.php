@@ -320,7 +320,7 @@ class PageController extends AbstractController
                 $em->remove($page);
                 $em->flush();
 
-                $this->crudLogger->createLog(Page::class, CrudLogger::CreateAction, $id);
+                $this->crudLogger->createLog(Page::class, CrudLogger::DeleteAction, $id);
 
                 $this->flashes->successMessage($this->adminTranslator->translate('admin.success_operation'));;
             } catch (\Exception $exception) {
