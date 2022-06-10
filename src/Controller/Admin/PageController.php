@@ -2,7 +2,9 @@
 
 namespace TwinElements\PageBundle\Controller\Admin;
 
+use Doctrine\Persistence\ManagerRegistry;
 use TwinElements\AdminBundle\Model\CrudControllerTrait;
+use TwinElements\Component\CrudLogger\CrudLogger;
 use TwinElements\Component\ResponseParameterBuilder\ResponseParameterBuilder;
 use TwinElements\PageBundle\Entity\Page\Page;
 use TwinElements\PageBundle\Entity\SearchPage;
@@ -124,7 +126,10 @@ class PageController extends AbstractController
     /**
      * @Route("/new", name="page_new", methods={"GET", "POST"})
      */
-    public function newAction(Request $request)
+    public function newAction(
+        Request $request,
+        ManagerRegistry $managerRegistry
+    )
     {
         try {
             $this->denyAccessUnlessGranted(PageVoter::FULL, new Page());
@@ -141,13 +146,13 @@ class PageController extends AbstractController
 
             if ($form->isSubmitted() && $form->isValid()) {
 
-                $em = $this->getDoctrine()->getManager();
+                $em = $managerRegistry->getManager();
 
                 $em->persist($page);
                 $page->mergeNewTranslations();
                 $em->flush();
 
-                $this->crudLogger->createLog($page->getId(), $page->getTitle());
+                $this->crudLogger->createLog(Page::class, CrudLogger::CreateAction, $page->getId());
 
                 $this->flashes->successMessage($this->adminTranslator->translate('admin.success_operation'));;
 
@@ -199,7 +204,7 @@ class PageController extends AbstractController
                 $page->mergeNewTranslations();
 
                 $em->flush();
-                $this->crudLogger->createLog($page->getId(), $page->getTitle());
+                $this->crudLogger->createLog(Page::class, CrudLogger::EditAction, $page->getId());
 
                 $this->flashes->successMessage($this->adminTranslator->translate('admin.success_operation'));;
             } catch (\Exception $exception) {
@@ -238,7 +243,12 @@ class PageController extends AbstractController
     /**
      * @Route("/{id}/add-new-content", name="page_add_new_content", methods={"POST", "GET"})
      */
-    public function addContent(int $id, Request $request, PageRepository $repository)
+    public function addContent(
+        int $id,
+        Request $request,
+        PageRepository $repository,
+        ManagerRegistry $managerRegistry
+    )
     {
         $this->denyAccessUnlessGranted(PageVoter::FULL, new Page());
         $parent = $repository->find($id);
@@ -254,13 +264,13 @@ class PageController extends AbstractController
         $form->handleRequest($request);
         if ($form->isSubmitted() && $form->isValid()) {
             try {
-                $em = $this->getDoctrine()->getManager();
+                $em = $managerRegistry->getManager();
                 $em->persist($page);
                 $page->mergeNewTranslations();
 
                 $em->flush();
 
-                $this->crudLogger->createLog($page->getId(), $page->getTitle());
+                $this->crudLogger->createLog(Page::class, CrudLogger::CreateAction, $page->getId());
                 $this->flashes->successMessage($this->adminTranslator->translate('admin.success_operation'));;
 
                 if ('save' === $form->getClickedButton()->getName()) {
@@ -283,7 +293,11 @@ class PageController extends AbstractController
     /**
      * @Route("/{id}", name="page_delete", methods={"DELETE"})
      */
-    public function deleteAction(Request $request, Page $page)
+    public function deleteAction(
+        Request $request,
+        Page $page,
+        ManagerRegistry $managerRegistry
+    )
     {
         $this->denyAccessUnlessGranted(PageVoter::FULL, new Page());
 
@@ -301,13 +315,12 @@ class PageController extends AbstractController
 
             try {
                 $id = $page->getId();
-                $title = $page->getTitle();
 
-                $em = $this->getDoctrine()->getManager();
+                $em = $managerRegistry->getManager();
                 $em->remove($page);
                 $em->flush();
 
-                $this->crudLogger->createLog($id, $title);
+                $this->crudLogger->createLog(Page::class, CrudLogger::CreateAction, $id);
 
                 $this->flashes->successMessage($this->adminTranslator->translate('admin.success_operation'));;
             } catch (\Exception $exception) {

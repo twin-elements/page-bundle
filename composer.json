@@ -12,7 +12,7 @@
     "require": {
         "php": "^7.4",
         "symfony/framework-bundle": "^4.4 || ^5.4",
-        "twin-elements/admin-bundle": "^1.6",
+        "twin-elements/admin-bundle": "^1.11",
         "twin-elements/seo-bundle": "^1.0",
         "twin-elements/form-extensions": "^1.4",
         "twin-elements/response-parameter-builder": "^1.0"
@@ -23,6 +23,6 @@
         }
     },
     "conflict": {
-        "twin-elements/admin-bundle": "<1.6"
+        "twin-elements/admin-bundle": "<1.11.3"
     }
 }
