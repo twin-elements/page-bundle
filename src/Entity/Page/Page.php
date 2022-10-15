@@ -86,6 +86,12 @@ class Page implements TranslatableInterface, BlameableInterface, TimestampableIn
      */
     private $isSeparateContent = false;
 
+    /**
+     * @var string|null
+     * @ORM\Column(type="string", length=255, nullable=true)
+     */
+    private ?string $template = null;
+
     public function __construct()
     {
         $this->children = new ArrayCollection();
@@ -312,5 +318,21 @@ class Page implements TranslatableInterface, BlameableInterface, TimestampableIn
     public function setRedirect(?string $redirect): void
     {
         $this->translate(null, false)->setRedirect($redirect);
+    }
+
+    /**
+     * @return string|null
+     */
+    public function getTemplate(): ?string
+    {
+        return $this->template;
+    }
+
+    /**
+     * @param string|null $template
+     */
+    public function setTemplate(?string $template): void
+    {
+        $this->template = $template;
     }
 }

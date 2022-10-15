@@ -2,7 +2,6 @@
 
 namespace TwinElements\PageBundle\Form;
 
-use TwinElements\FormExtensions\Type\FileWithTitleType;
 use TwinElements\FormExtensions\Type\ImageAlbumType;
 use TwinElements\FormExtensions\Type\TEChooseLinkType;
 use TwinElements\PageBundle\Entity\Page\Page;
@@ -16,7 +15,6 @@ use Symfony\Component\Security\Core\Authorization\AuthorizationCheckerInterface;
 use TwinElements\Component\AdminTranslator\AdminTranslator;
 use TwinElements\FormExtensions\Type\AttachmentsType;
 use TwinElements\FormExtensions\Type\SaveButtonsType;
-use TwinElements\FormExtensions\Type\TECollectionType;
 use TwinElements\FormExtensions\Type\TEEntityType;
 use TwinElements\FormExtensions\Type\TEUploadType;
 use TwinElements\FormExtensions\Type\TinymceType;
@@ -112,10 +110,15 @@ class PageType extends AbstractType
                 ]);
             }
 
-            $builder->add('code', TextType::class, [
-                'required' => false
-            ]);
+            $builder
+                ->add('code', TextType::class, [
+                    'required' => false
+                ])
+                ->add('template', TextType::class,[
+                    'required' => false,
+                ]);
         }
+
         if (!$options['is_content']) {
             $builder
                 ->add('redirect', TEChooseLinkType::class, [
