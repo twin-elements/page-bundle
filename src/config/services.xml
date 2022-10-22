@@ -22,6 +22,11 @@
             <tag name="twin_elements.url_builder" priority="10"/>
         </service>
 
+        <service id="TwinElements\PageBundle\Form\PageType">
+            <tag name="form.type"/>
+            <argument>%twin_elements_page%</argument>
+        </service>
+
         <service id="TwinElements\PageBundle\Role\PageRoles">
             <tag name="twin_elements.role" priority="95"/>
         </service>

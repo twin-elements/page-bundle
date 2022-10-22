@@ -14,7 +14,7 @@ page:
   search_results_by: "Wyniki wyszukiwania według"
   redirect: Przekierowanie
   redirect_help: Ustawienie przekierowania nie zmienia linku do danej podstrony! Należy korzystać z tej funkcjonalności tylko w razie konieczności.
-
+  template: Szablon
 role:
   role_page_view: Strony (przeglądanie)
   role_page_edit: Strony (edycja)

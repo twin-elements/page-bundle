@@ -2,6 +2,9 @@
 
 namespace TwinElements\PageBundle\Form;
 
+use Symfony\Component\Form\ChoiceList\Loader\CallbackChoiceLoader;
+use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
+use Symfony\Component\Form\FormInterface;
 use TwinElements\FormExtensions\Type\ImageAlbumType;
 use TwinElements\FormExtensions\Type\TEChooseLinkType;
 use TwinElements\PageBundle\Entity\Page\Page;
@@ -24,21 +27,19 @@ use function Doctrine\ORM\QueryBuilder;
 
 class PageType extends AbstractType
 {
-    /**
-     * @var AuthorizationCheckerInterface $authorizationChecker
-     */
-    private $authorizationChecker;
+    private AuthorizationCheckerInterface $authorizationChecker;
 
-    /**
-     * @var AdminTranslator $translator
-     */
-    private $translator;
+    private AdminTranslator $translator;
+
+    private array $configuration;
 
 
     public function __construct(
+        array                         $twinElementsConfig,
         AuthorizationCheckerInterface $authorizationChecker,
         AdminTranslator               $translator)
     {
+        $this->configuration = $twinElementsConfig;
         $this->translator = $translator;
         $this->authorizationChecker = $authorizationChecker;
     }
@@ -101,8 +102,24 @@ class PageType extends AbstractType
                 ->add('seo', SeoType::class);
         }
 
-        $builder
-            ->add('enable', ToggleChoiceType::class);
+        $builder->add('enable', ToggleChoiceType::class);
+
+        $templates = [];
+        $defaultTemplate = null;
+
+        foreach ($this->configuration['templates'] as $template) {
+            $templates[$this->translator->translate($this->configuration['template_translator_prefix'] . '.' . $template['name'])] = $template['path'];
+            if ($template['isDefault']) {
+                $defaultTemplate = $template['path'];
+            }
+        }
+        $builder->add('template', ChoiceType::class, [
+            'choices' => $templates,
+            'empty_data' => $defaultTemplate,
+            'label' => $this->translator->translate('page.template')
+        ]);
+
+
         if ($this->authorizationChecker->isGranted('ROLE_SUPER_ADMIN')) {
             if (!$options['is_content']) {
                 $builder->add('route', TextType::class, [
@@ -110,12 +127,10 @@ class PageType extends AbstractType
                 ]);
             }
 
+
             $builder
                 ->add('code', TextType::class, [
                     'required' => false
-                ])
-                ->add('template', TextType::class,[
-                    'required' => false,
                 ]);
         }
 
