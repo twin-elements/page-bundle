@@ -134,14 +134,12 @@ class PageType extends AbstractType
                 ]);
         }
 
-        if (!$options['is_content']) {
-            $builder
-                ->add('redirect', TEChooseLinkType::class, [
-                    'label' => $this->translator->translate('page.redirect'),
-                    'help' => $this->translator->translate('page.redirect_help')
-                ]);
-        }
-        $builder->add('buttons', SaveButtonsType::class);
+        $builder
+            ->add('redirect', TEChooseLinkType::class, [
+                'label' => $this->translator->translate('page.redirect'),
+                'help' => $this->translator->translate('page.redirect_help')
+            ])
+            ->add('buttons', SaveButtonsType::class);
     }
 
     /**
