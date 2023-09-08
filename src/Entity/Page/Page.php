@@ -92,6 +92,12 @@ class Page implements TranslatableInterface, BlameableInterface, TimestampableIn
      */
     private ?string $template = null;
 
+    /**
+     * @var bool
+     * @ORM\Column(type="boolean")
+     */
+    private bool $excludeFromNav = false;
+
     public function __construct()
     {
         $this->children = new ArrayCollection();
@@ -334,5 +340,21 @@ class Page implements TranslatableInterface, BlameableInterface, TimestampableIn
     public function setTemplate(?string $template): void
     {
         $this->template = $template;
+    }
+
+    /**
+     * @return bool
+     */
+    public function isExcludeFromNav(): bool
+    {
+        return $this->excludeFromNav;
+    }
+
+    /**
+     * @param bool $excludeFromNav
+     */
+    public function setExcludeFromNav(bool $excludeFromNav): void
+    {
+        $this->excludeFromNav = $excludeFromNav;
     }
 }

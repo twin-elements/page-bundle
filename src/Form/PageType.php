@@ -139,6 +139,10 @@ class PageType extends AbstractType
                 'label' => $this->translator->translate('page.redirect'),
                 'help' => $this->translator->translate('page.redirect_help')
             ])
+            ->add('excludeFromNav', ToggleChoiceType::class,[
+                'label' => $this->translator->translate('page.excludeFromNav'),
+                'help' => $this->translator->translate('page.excludeFromNav_help')
+            ])
             ->add('buttons', SaveButtonsType::class);
     }
 
